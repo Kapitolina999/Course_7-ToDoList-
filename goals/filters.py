@@ -1,7 +1,7 @@
 from django.db.models import DateTimeField
 from django_filters import IsoDateTimeFilter, rest_framework
 
-from goals.models import Goal
+from goals.models.goal import Goal
 
 
 class GoalDateFilter(rest_framework.FilterSet):
