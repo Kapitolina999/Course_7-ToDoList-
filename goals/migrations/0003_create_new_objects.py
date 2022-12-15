@@ -5,9 +5,9 @@ from django.utils import timezone
 
 def create_objects(apps, schema_editor):
     User = apps.get_model('core', 'User')
-    Board = apps.get_model('board', 'Board')
-    BoardParticipant = apps.get_model('board', 'BoardParticipant')
-    GoalCategory = apps.get_model('goals', 'GoalCategory')
+    Board = apps.get_model('goals.models', 'Board')
+    BoardParticipant = apps.get_model('goals.models', 'BoardParticipant')
+    GoalCategory = apps.get_model('goals.models', 'GoalCategory')
 
     with transaction.atomic():
         for user in User.objects.all():
