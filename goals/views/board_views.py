@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from goals.models.board import Board
 from goals.models.goal import Goal
 from goals.permissions import BoardPermissions
-from goals.serializers.board_serializers import BoardCreateSerializer
+from goals.serializers.board_serializers import BoardCreateSerializer, BoardListSerializer, BoardSerializer
 
 
 class BoardCreateView(generics.CreateAPIView):
@@ -17,8 +17,8 @@ class BoardCreateView(generics.CreateAPIView):
 
 class BoardListView(generics.ListAPIView):
     model = Board
-    serializer_class = BoardCreateSerializer
-    permission_classes = [IsAuthenticated]
+    serializer_class = BoardListSerializer
+    permission_classes = [BoardPermissions]
     filter_backends = [OrderingFilter, SearchFilter]
     ordering_fields = ['title', 'created']
     ordering = ['title']
@@ -30,8 +30,8 @@ class BoardListView(generics.ListAPIView):
 
 class BoardView(generics.RetrieveUpdateDestroyAPIView):
     model = Board
-    serializer_class = BoardCreateSerializer
-    permission_classes = [IsAuthenticated, BoardPermissions]
+    serializer_class = BoardSerializer
+    permission_classes = [BoardPermissions]
 
     def get_queryset(self):
         return Board.objects.filter(is_deleted=False, participants__user=self.request.user)

@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from rest_framework import serializers
 
-from core.serializers import ProfileSerializer
 from goals.models.board import Board, BoardParticipant
 
 User = get_user_model()
@@ -63,7 +62,9 @@ class BoardSerializer(serializers.ModelSerializer):
                     if old_participant.role != participant_id[old_participant.user_id]['role']:
                         old_participant.role = participant_id[old_participant.user_id]['role']
                         old_participant.save()
+
                     participant_id.pop(old_participant.user_id)
+
             for new_participant in participant_id.values():
                 BoardParticipant.objects.create(board=instance, user=new_participant['user'],
                                                 role=new_participant['role'])
