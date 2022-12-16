@@ -38,7 +38,7 @@ jobs:
           password: ${{ secrets.PASSWORD_DEPLOY }}
           source: "deploy/docker-compose.yaml,deploy/.env"
           target: "course_7"
-          strip_components: 1.py
+          strip_components: 1
       - name: deploy
         uses: appleboy/ssh-action@master
         with:
