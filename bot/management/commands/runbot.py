@@ -3,7 +3,6 @@ from django.core.management import BaseCommand
 
 from bot.models import TgUser
 from bot.tg.client import TgClient
-from bot.tg.dc import Message
 from goals.models.goal import Goal
 
 
@@ -27,7 +26,7 @@ class Command(BaseCommand):
                 if created:
                     tg_user.set_verification_code()
                     self.tg_client.send_message(tg_user.tg_chat_id,
-                                                f'Привет. Подтвердите, пожалуйста, свой аккаунт. '
+                                                f'Привет. Подтверди, пожалуйста, свой аккаунт. '
                                                 f'Для подтверждения необходимо ввести код: '
                                                 f'{tg_user.verification_code}')
                     continue
