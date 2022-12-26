@@ -9,9 +9,9 @@ from marshmallow import EXCLUDE
 class MessageFrom:
     id: int
     is_bot: bool
-    first_name: str
+    first_name: Optional[str]
     last_name: Optional[str]
-    username: str
+    username: Optional[str]
 
     class Meta:
         unknown = EXCLUDE
@@ -21,10 +21,10 @@ class MessageFrom:
 class Chat:
     id: int
     type: str
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    username: Optional[str] = None
-    title: Optional[str] = None
+    first_name: Optional[str]
+    last_name: Optional[str]
+    username: Optional[str]
+    title: Optional[str]
     # photo: Optional[telegram.ChatPhoto]
 
     class Meta:
@@ -37,7 +37,7 @@ class Message:
     from_: MessageFrom = field(metadata={'data_key': 'from'})
     chat: Chat
     date: int
-    text: Optional[str] = None
+    text: Optional[str]
 
     class Meta:
         unknown = EXCLUDE

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 
     'core',
     'goals',
+    'bot',
 
 ]
 
@@ -169,3 +170,5 @@ SOCIAL_AUTH_PIPELINE = (
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
 }
+
+TG_BOT_API_TOKEN = env.str('TG_BOT_API_TOKEN')

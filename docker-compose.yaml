@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   frontend:
-    image: sermalenk/skypro-front:lesson-37
+    image: sermalenk/skypro-front:lesson-38
     restart: always
     depends_on:
       - api
@@ -47,6 +47,18 @@ services:
       - ./core:/app/core
       - ./goals:/app/goals
       - ./ToDoList:/app/todolist
+  bot:
+    build:
+      context: .
+    env_file:
+      - ./.docker_env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+    command: python manage.py runbot
+    restart: always
 
 volumes:
   postgres_data:

@@ -4,6 +4,7 @@ from django.core.management import BaseCommand
 from bot.models import TgUser
 from bot.tg.client import TgClient
 from bot.tg.dc import Message
+from goals.models.goal import Goal
 
 
 class Command(BaseCommand):
@@ -19,43 +20,38 @@ class Command(BaseCommand):
         while True:
             response = self.tg_client.get_updates(offset=offset)
             for item in response.result:
-                offset += item.update_id
-                self.handle_message(item.message)
+                offset = item.update_id + 1
+                tg_user, created = TgUser.objects.get_or_create(tg_chat_id=item.message.chat.id,
+                                                                tg_user_id=item.message.from_.id)
 
-    def handle_message(self, message: Message):
-        tg_user, created = TgUser.objects.get_or_create(tg_id=message.from_.id,
-                                                        defaults={'tg_chat_id': message.chat.id,
-                                                                  'username': message.from_.username})
-        if created:
-            self.tg_client.send_message(message.chat.id, '[greeting]')
+                if created:
+                    tg_user.set_verification_code()
+                    self.tg_client.send_message(tg_user.tg_chat_id,
+                                                f'Привет. Подтвердите, пожалуйста, свой аккаунт. '
+                                                f'Для подтверждения необходимо ввести код: '
+                                                f'{tg_user.verification_code}')
+                    continue
 
-        if tg_user.user:
-            self.handle_verified_user(message, tg_user)
-        else:
-            self.handle_user_without_verification(message, tg_user)
+                elif not tg_user.user:
+                    tg_user.set_verification_code()
+                    self.tg_client.send_message(tg_user.tg_chat_id,
+                                                f'Для дальнейшей работы подтвердите, пожалуйста, свой аккаунт. '
+                                                f'Для подтверждения необходимо ввести код: '
+                                                f'{tg_user.verification_code}')
+                    continue
 
-    def handle_user_without_verification(self, message: Message, tg_user: TgUser):
-        tg_user.set_verification_code()
-        tg_user.save(update_fields=['verification_code'])
-        self.tg_client.send_message(
-            message.chat.id, f'[verification code] {tg_user.verification_code}'
-        )
+                if item.message.text == '/goals':
+                    user = tg_user.user
+                    goals = Goal.objects.filter(category__board__participants__user=user)
 
-    def fetch_tasks(self, message: Message, tg_user: TgUser):
-        gls = Goal.objects.filter(user=tg_user.user)
-        if gls.count() > 0:
-            resp_message = [f'#{item.id} {item.title}' for item in gls]
-            self.tg_client.send_message(message.chat.id, '\n'.join(resp_message))
-        else:
-            self.tg_client.send_message(message.chat.id, '[goals list is empty]')
+                    for goal in goals:
+                        self.tg_client.send_message(tg_user.tg_chat_id,
+                                                    f'Название {goal.title}, \n '
+                                                    f'Категория {goal.category}, \n'
+                                                    f'Статус {goal.get_status_display()}, \n'
+                                                    f'Дедлайн {goal.due_date if goal.due_date else "Нет"} \n')
 
-    def handle_verified_user(self, message: Message, tg_user: TgUser):
-        if not message.text:
-            return
-        if '/goals' in message.text:
-            self.fetch_tasks(message, tg_user)
-        else:
-            self.tg_client.send_message(message.chat.id, '[unknown command]')
-
+                else:
+                    self.tg_client.send_message(tg_user.tg_chat_id, 'Неизвестная команда')
 
 

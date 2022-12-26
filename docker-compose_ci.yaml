@@ -40,6 +40,17 @@ services:
     restart: always
     env_file:
       - .env
+  bot:
+      image: kapitolina/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+      env_file:
+        - .env
+      depends_on:
+        postgres:
+          condition: service_healthy
+        migrations:
+          condition: service_completed_successfully
+      command: python manage.py runbot
+      restart: always
 
 volumes:
   postgres_data:

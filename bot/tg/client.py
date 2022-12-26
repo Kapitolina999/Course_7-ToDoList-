@@ -12,11 +12,15 @@ class TgClient:
 
     def get_updates(self, offset: int = 0, timeout: int = 60) -> dc.GetUpdatesResponse:
         url = self.get_url('getUpdates')
-        response = requests.get(url, params={'offset': offset, 'timeout': timeout})
+        # response = requests.get(url, params={'offset': offset, 'timeout': timeout,
+        #                                      'allowed_updates': "['update_id', 'message']"})
+        response = requests.get(self.get_url(f'getUpdates?offset={offset}&timeout={timeout}&'
+                                             f'allowed_updates=["update_id","message"]'))
+        print(response.json())
         return dc.GET_UPDATES_SCHEMA.load(response.json())
 
     def send_message(self, chat_id: int, text: str) -> dc.SendMessageResponse:
         url = self.get_url('sendMessage')
         response = requests.post(url, json={'chat_id': chat_id, 'text': text})
+        print(response.json())
         return dc.SEND_MESSAGE_SCHEMA.load(response.json())
-
