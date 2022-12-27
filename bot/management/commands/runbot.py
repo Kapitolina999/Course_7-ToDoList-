@@ -93,4 +93,4 @@ class Command(BaseCommand):
             else:
                 goal = Goal(title=item.message.text, category=category, user=tg_user.user)
                 goal.save()
-                continue
+                self.tg_client.send_message(tg_user.tg_chat_id, f'Создана задача {goal.title}')
