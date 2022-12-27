@@ -32,8 +32,7 @@ class Command(BaseCommand):
                     self.choice_category(tg_user)
                 else:
                     self.tg_client.send_message(tg_user.tg_chat_id, 'Для просмотра списка задач введи /goals.\n'
-                                                                    'Для создания задачи введи /create.\n'
-                                                                    'Для отмены введи /cancle')
+                                                                    'Для создания задачи введи /create.')
 
     def check_user(self, message):
         tg_user, created = TgUser.objects.get_or_create(tg_chat_id=message.chat.id, tg_user_id=message.from_.id)
@@ -61,11 +60,9 @@ class Command(BaseCommand):
 
     def choice_category(self, tg_user):
         categories = GoalCategory.objects.filter(board__participants__user=tg_user.user, is_deleted=False)
-        # self.tg_client.send_message(tg_user.tg_chat_id, 'Выбери категорию:')
-        # [self.tg_client.send_message(tg_user.tg_chat_id, category.title) for category in categories]
-        self.tg_client.send_message(tg_user.tg_chat_id,
-                                    f'Выбери категорию: {[category.title for category in categories]}\n'
-                                    f'Для отмены введи /cancle')
+        self.tg_client.send_message(tg_user.tg_chat_id, 'Выбери категорию:')
+        [self.tg_client.send_message(tg_user.tg_chat_id, category.title) for category in categories]
+        self.tg_client.send_message(tg_user.tg_chat_id, 'Для отмены введи /cancle')
         dict_categories = {item.title: item for item in categories}
 
         flag = True
@@ -84,15 +81,15 @@ class Command(BaseCommand):
                     self.tg_client.send_message(tg_user.tg_chat_id, 'Категория не существует')
 
     def create_goal(self, tg_user, category):
-        self.tg_client.send_message(tg_user.tg_chat_id, 'Укажите название задачи. Для отмены введи /cancle')
+        self.tg_client.send_message(tg_user.tg_chat_id, 'Укажи название задачи. \n'
+                                                        'Для отмены введи /cancle')
 
-        flag = True
-        while flag:
-            response = self.tg_client.get_updates(offset=self.offset)
-            for item in response.result:
-                self.offset = item.update_id + 1
-                if item.message.text == '/cancle':
-                    flag = False
-                else:
-                    goal = Goal(title=item.message.text, category=category, user=tg_user.user)
-                    goal.save()
+        response = self.tg_client.get_updates(offset=self.offset)
+        for item in response.result:
+            self.offset = item.update_id + 1
+            
+            if item.message.text == '/cancle':
+                continue
+            else:
+                goal = Goal(title=item.message.text, category=category, user=tg_user.user)
+                goal.save()
