@@ -47,6 +47,7 @@ services:
       - ./core:/app/core
       - ./goals:/app/goals
       - ./ToDoList:/app/todolist
+      - ./bot:/app/bot
   bot:
     build:
       context: .

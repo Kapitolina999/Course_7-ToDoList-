@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core.management import BaseCommand
+from django.db import IntegrityError
 
 from bot.models import TgUser
 from bot.tg.client import TgClient
@@ -38,7 +39,12 @@ class Command(BaseCommand):
         tg_user, created = TgUser.objects.get_or_create(tg_chat_id=message.chat.id, tg_user_id=message.from_.id)
 
         if created or not tg_user.user:
-            tg_user.set_verification_code()
+
+            try:
+                tg_user.set_verification_code()
+            except IntegrityError as e:
+                tg_user.set_verification_code()
+
             self.tg_client.send_message(tg_user.tg_chat_id,
                                         f'Привет. Подтверди, пожалуйста, свой аккаунт. '
                                         f'Для подтверждения необходимо ввести код в приложении: '
