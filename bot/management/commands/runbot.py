@@ -87,9 +87,10 @@ class Command(BaseCommand):
         response = self.tg_client.get_updates(offset=self.offset)
         for item in response.result:
             self.offset = item.update_id + 1
-            
+
             if item.message.text == '/cancle':
                 continue
             else:
                 goal = Goal(title=item.message.text, category=category, user=tg_user.user)
                 goal.save()
+                continue
