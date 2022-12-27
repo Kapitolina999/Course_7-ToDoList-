@@ -24,8 +24,8 @@ class Goal(models.Model):
         critical = 4, 'Критический'
 
     status = models.PositiveSmallIntegerField(verbose_name='Статус', choices=Status.choices, default=Status.to_do)
-    priority = models.PositiveSmallIntegerField(
-        verbose_name='Приоритет', choices=Priority.choices, default=Priority.medium)
+    priority = models.PositiveSmallIntegerField(verbose_name='Приоритет', choices=Priority.choices,
+                                                default=Priority.medium)
     user = models.ForeignKey(User, verbose_name='Пользователь', related_name='goals', on_delete=models.PROTECT)
     created = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True)
     updated = models.DateTimeField(verbose_name='Дата последнего обновления', auto_now=True)
