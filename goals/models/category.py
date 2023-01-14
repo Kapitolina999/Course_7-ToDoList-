@@ -18,5 +18,5 @@ class GoalCategory(models.Model):
     updated = models.DateTimeField(verbose_name='Дата последнего обновления', auto_now=True)
     board = models.ForeignKey(Board, verbose_name='Доска', on_delete=models.PROTECT, related_name='categories')
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title

@@ -4,6 +4,7 @@ from rest_framework import serializers
 from core.serializers import ProfileSerializer
 from goals.models.board import BoardParticipant
 from goals.models.comment import Comment
+from goals.models.goal import Goal
 
 User = get_user_model()
 
@@ -16,7 +17,7 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['id', 'created', 'updated', 'user']
 
-    def validate_goal(self, value):
+    def validate_goal(self, value: Goal) -> Goal:
         if not BoardParticipant.objects.filter(board_id=value.category.board_id, 
                                                role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
                                                user=self.context['request'].user).exists():

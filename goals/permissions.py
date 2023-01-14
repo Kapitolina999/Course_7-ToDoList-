@@ -1,10 +1,13 @@
 from rest_framework import permissions
 
-from goals.models.board import BoardParticipant
+from goals.models.board import BoardParticipant, Board
+from goals.models.category import GoalCategory
+from goals.models.comment import Comment
+from goals.models.goal import Goal
 
 
 class BoardPermissions(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request, view, obj: Board) -> bool:
         if not request.user.is_authenticated:
             return False
 
@@ -15,7 +18,7 @@ class BoardPermissions(permissions.BasePermission):
 
 
 class GoalCategoryPermissions(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request, view, obj: GoalCategory) -> bool:
         if not request.user.is_authenticated:
             return False
 
@@ -28,7 +31,7 @@ class GoalCategoryPermissions(permissions.BasePermission):
 
 
 class GoalPermissions(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request, view, obj: Goal) -> bool:
 
         if not request.user.is_authenticated:
             return False
@@ -42,7 +45,7 @@ class GoalPermissions(permissions.BasePermission):
 
 
 class CommentPermissions(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request, view, obj: Comment) -> bool:
 
         if not request.user.is_authenticated:
             return False

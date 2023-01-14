@@ -36,7 +36,7 @@ class BoardView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return Board.objects.filter(is_deleted=False, participants__user=self.request.user)
 
-    def perform_destroy(self, instance: Board):
+    def perform_destroy(self, instance: Board) -> Board:
         with transaction.atomic():
             instance.is_deleted = True
             instance.save()

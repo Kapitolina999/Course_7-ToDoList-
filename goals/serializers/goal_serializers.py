@@ -18,7 +18,7 @@ class GoalCreateSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created', 'updated', 'user']
         fields = '__all__'
 
-    def validate_category(self, value):
+    def validate_category(self, value: GoalCategory) -> GoalCategory:
         if value.is_deleted:
             raise serializers.ValidationError('not allowed in deleted category')
 
@@ -38,7 +38,7 @@ class GoalSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created', 'updated', 'user']
         fields = '__all__'
 
-    def validate_category(self, value):
+    def validate_category(self, value: GoalCategory) -> GoalCategory:
         if value.is_deleted:
             raise serializers.ValidationError('not allowed in deleted category')
 

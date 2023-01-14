@@ -34,5 +34,5 @@ class Goal(models.Model):
     due_date = models.DateField(verbose_name='Дата выполнения', null=True)
     category = models.ForeignKey(GoalCategory, verbose_name='Категория', related_name='goals', on_delete=models.CASCADE)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title

@@ -1,9 +1,12 @@
+from typing import Literal
+
 from django.conf import settings
 from django.core.management import BaseCommand
 from django.db import IntegrityError
 
 from bot.models import TgUser
 from bot.tg.client import TgClient
+from bot.tg.dc import Message, SendMessageResponse
 from goals.models.category import GoalCategory
 from goals.models.goal import Goal
 
@@ -16,13 +19,13 @@ class Command(BaseCommand):
         self.tg_client = TgClient(settings.TG_BOT_API_TOKEN)
         self.offset = 0
 
-    def handle(self, *args, **kwargs):
+    def handle(self, *args, **kwargs) -> SendMessageResponse:
 
         while True:
             response = self.tg_client.get_updates(offset=self.offset)
             for item in response.result:
                 self.offset = item.update_id + 1
-                tg_user: TgUser | False = self.check_user(item.message)
+                tg_user: TgUser | Literal[False] = self.check_user(item.message)
 
                 if not tg_user:
                     continue
@@ -35,7 +38,7 @@ class Command(BaseCommand):
                     self.tg_client.send_message(tg_user.tg_chat_id, 'Для просмотра списка задач введи /goals.\n'
                                                                     'Для создания задачи введи /create.')
 
-    def check_user(self, message):
+    def check_user(self, message: Message) -> TgUser | Literal[False]:
         tg_user, created = TgUser.objects.get_or_create(tg_chat_id=message.chat.id, tg_user_id=message.from_.id)
 
         if created or not tg_user.user:
@@ -52,7 +55,7 @@ class Command(BaseCommand):
             return False
         return tg_user
 
-    def get_goals(self, tg_user):
+    def get_goals(self, tg_user: TgUser):
         goals = Goal.objects.filter(user=tg_user.user, status__in=[1, 2, 3])
 
         if goals.count() > 0:
@@ -64,7 +67,7 @@ class Command(BaseCommand):
         else:
             self.tg_client.send_message(tg_user.tg_chat_id, 'Нет задач')
 
-    def choice_category(self, tg_user):
+    def choice_category(self, tg_user: TgUser):
         categories = GoalCategory.objects.filter(board__participants__user=tg_user.user, is_deleted=False)
         self.tg_client.send_message(tg_user.tg_chat_id, 'Выбери категорию:')
         [self.tg_client.send_message(tg_user.tg_chat_id, category.title) for category in categories]
@@ -78,7 +81,7 @@ class Command(BaseCommand):
                 self.offset = item.update_id + 1
 
                 if item.message.text in dict_categories:
-                    category = dict_categories.get(item.message.text)
+                    category = dict_categories[item.message.text]
                     self.create_goal(tg_user, category)
                     flag = False
                 elif item.message.text == '/cancle':
@@ -86,7 +89,8 @@ class Command(BaseCommand):
                 else:
                     self.tg_client.send_message(tg_user.tg_chat_id, 'Категория не существует')
 
-    def create_goal(self, tg_user, category):
+    def create_goal(self, tg_user: TgUser, category: GoalCategory):
+
         self.tg_client.send_message(tg_user.tg_chat_id, 'Укажи название задачи. \n'
                                                         'Для отмены введи /cancle')
 

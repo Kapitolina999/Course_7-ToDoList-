@@ -25,7 +25,7 @@ class BoardCreateSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created', 'updated']
         fields = '__all__'
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict) -> Board:
         user = validated_data.pop('user')
         board = Board.objects.create(**validated_data)
         BoardParticipant.objects.create(user=user, board=board, role=BoardParticipant.Role.owner)
@@ -47,7 +47,7 @@ class BoardSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['id', 'created', 'updated']
 
-    def update(self, instance, validated_data):
+    def update(self, instance, validated_data: dict):
         owner = validated_data.pop('user')
         participants = validated_data.pop('participants')
         participant_id = {participant['user'].id: participant for participant in participants}

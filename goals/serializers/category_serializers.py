@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from core.serializers import ProfileSerializer
-from goals.models.board import BoardParticipant
+from goals.models.board import BoardParticipant, Board
 from goals.models.category import GoalCategory
 
 User = get_user_model()
@@ -16,7 +16,7 @@ class GoalCategoryCreateSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created', 'updated', 'user']
         fields = '__all__'
 
-    def validate_board(self, value):
+    def validate_board(self, value: Board) -> Board:
         if value.is_deleted:
             raise serializers.ValidationError('not allowed in deleted board')
 

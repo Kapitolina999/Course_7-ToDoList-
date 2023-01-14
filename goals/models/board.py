@@ -31,10 +31,5 @@ class BoardParticipant(models.Model):
     role = models.PositiveSmallIntegerField(verbose_name='Роль', choices=Role.choices, default=Role.owner)
     created = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True)
     updated = models.DateTimeField(verbose_name='Дата последнего обновления', auto_now=True)
-
     role_choices = Role.choices
     role_choices.pop(0)
-
-    # @property
-    # def values(cls):
-    #     return [value for value, _ in cls.choices]
