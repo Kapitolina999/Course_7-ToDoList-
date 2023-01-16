@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser  # type: ignore
+from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
