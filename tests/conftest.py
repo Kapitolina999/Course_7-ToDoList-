@@ -3,9 +3,12 @@ from pytest_factoryboy import register
 from rest_framework.test import APIClient
 
 from core.models import User
-from tests.factories import UserFactory
+from tests.factories import BoardFactory, ParticipantFactory, CategoryFactory, GoalFactory
 
-register(UserFactory)
+register(BoardFactory)
+register(ParticipantFactory)
+register(CategoryFactory)
+register(GoalFactory)
 
 
 @pytest.fixture
@@ -23,6 +26,4 @@ def api_client(new_user):
     client = APIClient()
     client.login(username='testname1', password='56po4gnkaW1')
     return client
-
-
 

@@ -1,10 +1,7 @@
-import json
-
 import pytest
 from django.urls import reverse
 
 from core import serializers
-from tests.factories import UserFactory
 
 
 @pytest.mark.django_db
@@ -41,14 +38,14 @@ def test_login(client, new_user):
 @pytest.mark.django_db
 def test_profile_retrieve(api_client, new_user):
     response = api_client.get(reverse('profile'))
-    expected_response = serializers.ProfileSerializer(instance=new_user).data
+    expected_response = serializers.ProfileSerializer(new_user).data
 
     assert response.status_code == 200
     assert response.data == expected_response
 
 
 @pytest.mark.django_db
-def test_profile_update(api_client):
+def test_profile_delete(api_client):
     response = api_client.delete(reverse('profile'))
 
     assert response.status_code == 204

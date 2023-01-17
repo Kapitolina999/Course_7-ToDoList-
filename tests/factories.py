@@ -11,7 +11,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
 
-    username = factory.Sequence(lambda n: 'testname%s' % n)
+    username = factory.Sequence(lambda n: 'user_testname%s' % n)
     email = factory.Sequence(lambda n: 'test%s@mail.ru' % n)
     password = '56po4gnkaW1'
 
@@ -27,12 +27,16 @@ class ParticipantFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = BoardParticipant
 
+    # board = factory.SubFactory(BoardFactory)
+    # user = factory.SubFactory(UserFactory)
+
 
 class CategoryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = GoalCategory
 
     title = factory.Sequence(lambda n: 'category_%s' % n)
+    board = factory.SubFactory(BoardFactory)
 
 
 class GoalFactory(factory.django.DjangoModelFactory):
